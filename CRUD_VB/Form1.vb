@@ -92,32 +92,71 @@ Public Class FormCliente
     End Sub
 
     Private Sub btnActualizar_Click(sender As Object, e As EventArgs) Handles btnActualizar.Click
-        Using con As SqlConnection = New SqlConnection(connectionstring)
-            Using cmd As SqlCommand = New SqlCommand("UPDATE tblCliente SET Nombre = @Nombre, Ciudad = @Ciudad WHERE ClienteId = @ClienteId", con)
-                cmd.Parameters.AddWithValue("@ClienteId", txtId.Text)
-                cmd.Parameters.AddWithValue("@Nombre", txtNombre.Text)
-                cmd.Parameters.AddWithValue("@Ciudad", txtCiudad.Text)
-                con.Open()
-                cmd.ExecuteNonQuery()
-                con.Close()
-                MessageBox.Show("actualizado con éxito !!")
-            End Using
-        End Using
+        'Using con As SqlConnection = New SqlConnection(connectionstring)
+        '    Using cmd As SqlCommand = New SqlCommand("UPDATE tblCliente SET Nombre = @Nombre, Ciudad = @Ciudad WHERE ClienteId = @ClienteId", con)
+        '        cmd.Parameters.AddWithValue("@ClienteId", txtId.Text)
+        '        cmd.Parameters.AddWithValue("@Nombre", txtNombre.Text)
+        '        cmd.Parameters.AddWithValue("@Ciudad", txtCiudad.Text)
+        '        con.Open()
+        '        cmd.ExecuteNonQuery()
+        '        con.Close()
+        '        MessageBox.Show("actualizado con éxito !!")
+        '    End Using
+        'End Using
+
+        Try
+            Dim client As New Cliente
+            client.Nombre = txtNombre.Text.Trim()
+            client.Ciudad = txtCiudad.Text.Trim()
+            sqlcon = New SqlConnection(connectionstring)
+            sqlcmd.Connection = sqlcon
+            sqlcmd.CommandText = "spCliente"
+            sqlcmd.CommandType = CommandType.StoredProcedure
+            sqlcmd.Parameters.AddWithValue("modo", "actualizar")
+            sqlcmd.Parameters.AddWithValue("@ClienteId", txtId.Text)
+            sqlcmd.Parameters.AddWithValue("@Nombre", txtNombre.Text)
+            sqlcmd.Parameters.AddWithValue("@Ciudad", txtCiudad.Text)
+            sqlcon.Open()
+            sqlcmd.ExecuteNonQuery()
+            sqlcmd.Parameters.Clear()
+            sqlcon.Close()
+            MessageBox.Show("actualizado con éxito !!")
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message.ToString())
+        End Try
 
         Me.Load_grid()
         Me.Limpiar()
     End Sub
 
     Private Sub btnEliminar_Click(sender As Object, e As EventArgs) Handles btnEliminar.Click
-        Using con As SqlConnection = New SqlConnection(connectionstring)
-            Using cmd As SqlCommand = New SqlCommand("DELETE FROM tblCliente WHERE ClienteId = @ClienteId", con)
-                cmd.Parameters.AddWithValue("@ClienteId", txtId.Text)
-                con.Open()
-                cmd.ExecuteNonQuery()
-                con.Close()
-                MessageBox.Show("eliminado con éxito !!")
-            End Using
-        End Using
+        'Using con As SqlConnection = New SqlConnection(connectionstring)
+        '    Using cmd As SqlCommand = New SqlCommand("DELETE FROM tblCliente WHERE ClienteId = @ClienteId", con)
+        '        cmd.Parameters.AddWithValue("@ClienteId", txtId.Text)
+        '        con.Open()
+        '        cmd.ExecuteNonQuery()
+        '        con.Close()
+        '        MessageBox.Show("eliminado con éxito !!")
+        '    End Using
+        'End Using
+
+        Try
+            sqlcon = New SqlConnection(connectionstring)
+            sqlcmd.Connection = sqlcon
+            sqlcmd.CommandText = "spCliente"
+            sqlcmd.CommandType = CommandType.StoredProcedure
+            sqlcmd.Parameters.AddWithValue("modo", "eliminar")
+            sqlcmd.Parameters.AddWithValue("@ClienteId", txtId.Text)
+            sqlcon.Open()
+            sqlcmd.ExecuteNonQuery()
+            sqlcmd.Parameters.Clear()
+            sqlcon.Close()
+            MessageBox.Show("eliminado con éxito !!")
+
+        Catch ex As Exception
+            MessageBox.Show(ex.Message.ToString())
+        End Try
 
         Me.Load_grid()
         Me.Limpiar()
